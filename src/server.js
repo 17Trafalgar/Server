@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import { start } from "fastify-cli/start";
 import dbConnector from "./our-db-connector";
 import firstRoute from "./our-first-route";
 
@@ -22,3 +23,5 @@ module.exports = async function (fastify, opts) {
     return { hello: "world" };
   });
 };
+
+start();
