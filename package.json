@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
+    "start": "fastify start src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,6 +20,7 @@
   "dependencies": {
     "@fastify/mongodb": "^6.1.0",
     "fastify": "^4.9.2",
+    "fastify-cli": "^5.5.1",
     "fastify-plugin": "^4.3.0"
   }
 }
