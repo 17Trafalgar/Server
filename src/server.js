@@ -1,13 +1,15 @@
-import Fastify from "fastify";
-import { start } from "fastify-cli/start";
-import dbConnector from "./our-db-connector";
-import firstRoute from "./our-first-route";
+const Fastify = require("fastify");
+const dbConnector = require("./our-db-connector");
+const firstRoute = require("./out-first-route");
 
 const fastify = Fastify({
   logger: true,
 });
+console.log(2);
 fastify.register(dbConnector);
+console.log(3);
 fastify.register(firstRoute);
+console.log(4);
 
 fastify.listen({ port: 3000 }, function (err, address) {
   if (err) {
@@ -15,13 +17,3 @@ fastify.listen({ port: 3000 }, function (err, address) {
     process.exit(1);
   }
 });
-
-("use strict");
-
-module.exports = async function (fastify, opts) {
-  fastify.get("/", async (request, reply) => {
-    return { hello: "world" };
-  });
-};
-
-start();
