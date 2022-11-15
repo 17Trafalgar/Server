@@ -32,6 +32,15 @@ async function routes(fastify, options) {
     return result;
   });
 
+  fastify.delete('/animals/:id', async (request, reply) => {
+    const id = new ObjectId(request.params.id);
+    const result = await collection.deleteOne({ _id: id }, { $lt: { animal: request.body.animal } });
+    if (!result) {
+      throw new Error('Cannot access id');
+    }
+    return result;
+  });
+
   const animalBodyJsonSchema = {
     type: 'object',
     required: ['animal'],
