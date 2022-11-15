@@ -1,6 +1,6 @@
-const Fastify = require("fastify");
-const dbConnector = require("./our-db-connector");
-const firstRoute = require("./out-first-route");
+const Fastify = require('fastify');
+const dbConnector = require('./our-db-connector');
+const firstRoute = require('./out-first-route');
 
 const fastify = Fastify({
   logger: true,
