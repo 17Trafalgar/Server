@@ -25,9 +25,7 @@ async function routes(fastify, options) {
 
   fastify.put('/animals/:id', async (request, reply) => {
     const id = new ObjectId(request.params.id);
-    const query = { _id: id };
-    const update = { $set: { animal: request.body.animal } };
-    const result = await collection.updateOne(query, update);
+    const result = await collection.updateOne({ _id: id }, { $set: { animal: request.body.animal } });
     return result;
   });
 
