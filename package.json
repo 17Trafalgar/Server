@@ -19,8 +19,16 @@
   "homepage": "https://github.com/17Trafalgar/Server#readme",
   "dependencies": {
     "@fastify/mongodb": "^6.1.0",
+    "bson-objectid": "^2.0.3",
     "fastify": "^4.9.2",
     "fastify-cli": "^5.5.1",
-    "fastify-plugin": "^4.3.0"
+    "fastify-plugin": "^4.3.0",
+    "fastify-x-request-id": "^2.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.27.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1"
   }
 }
