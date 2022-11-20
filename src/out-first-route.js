@@ -87,15 +87,20 @@ async function routes(fastify, options) {
       password: { type: 'string' },
     },
   };
-
   const schema1 = {
     body: userBodyJsonSchema,
   };
-
-  fastify.post('/user', { schema1 }, async (request, reply) => {
-    const result = await collectionUser.insertOne({ email: request.body.email, password: request.body.password });
-    return result;
+  fastify.post('/register', { schema1 }, async (request, reply) => {
+    try {
+      const result = await collectionUser.insertOne({ email: request.body.email, password: request.body.password });
+      return result;
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new Error('This email was already registered');
+      }
+    }
   });
+  collectionUser.createIndex({ email: 1 }, { unique: true });
 }
 
 module.exports = routes;
