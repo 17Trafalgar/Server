@@ -23,7 +23,8 @@
     "fastify": "^4.9.2",
     "fastify-cli": "^5.5.1",
     "fastify-plugin": "^4.3.0",
-    "fastify-x-request-id": "^2.0.0"
+    "fastify-x-request-id": "^2.0.0",
+    "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
     "eslint": "^8.27.0",
