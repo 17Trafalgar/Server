@@ -1,4 +1,6 @@
 const ObjectId = require('@fastify/mongodb').ObjectId;
+const generateAccessToken = require('./JWT-token');
+const { secret } = require('./confing');
 
 async function routes(fastify, options) {
   const collection = fastify.mongo.db.collection('test_collection');
@@ -41,23 +43,6 @@ async function routes(fastify, options) {
     }
     return result;
   });
-  //
-  fastify.get('/users', async (request, reply) => {
-    const result = await collectionUser.find().toArray();
-    if (result.length === 0) {
-      throw new Error('No documents found');
-    }
-    return result;
-  });
-
-  fastify.get('/users/:user', async (request, reply) => {
-    const result = await collectionUser.findOne({ user: request.params.user });
-    if (!result) {
-      throw new Error('Invalid value');
-    }
-    return result;
-  });
-  //
 
   const animalBodyJsonSchema = {
     type: 'object',
@@ -90,6 +75,7 @@ async function routes(fastify, options) {
   const schema1 = {
     body: userBodyJsonSchema,
   };
+
   fastify.post('/register', { schema1 }, async (request, reply) => {
     try {
       const result = await collectionUser.insertOne({ email: request.body.email, password: request.body.password });
@@ -101,6 +87,17 @@ async function routes(fastify, options) {
     }
   });
   collectionUser.createIndex({ email: 1 }, { unique: true });
+
+  fastify.post('/login', { schema1 }, async (request, reply) => {
+    try {
+      const user = await collectionUser.findOne({ email: request.body.email, password: request.body.password });
+      return generateAccessToken(user._id, user.email);
+    } catch (error) {
+      if (error) {
+        throw new Error('This token is not defiened');
+      }
+    }
+  });
 }
 
 module.exports = routes;
