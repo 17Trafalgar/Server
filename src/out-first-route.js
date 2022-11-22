@@ -98,6 +98,12 @@ async function routes(fastify, options) {
       }
     }
   });
+  async function checkaccessToken(request, reply) {
+    const checkToken = await collection.findOne({ secret }).toArray();
+    if (checkToken.length === 0) {
+      throw new Error('Dont find a token');
+    }
+  }
 }
 
 module.exports = routes;
