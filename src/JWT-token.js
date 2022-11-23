@@ -9,6 +9,8 @@ const generateAccessToken = (id, email) => {
   return jwt.sign(load, secret, { expiresIn: '24h' });
 };
 
-module.exports = generateAccessToken;
-// ffunction checkaccessToken
-// в каждом роуте кроме лоигна и регистр, я должен проверить свой токен, если нет, то код ошибки "503"
+function checkToken(token) {
+  return jwt.verify(token, secret);
+}
+
+module.exports = { generateAccessToken, checkToken };

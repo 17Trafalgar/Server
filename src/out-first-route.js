@@ -1,16 +1,17 @@
 const ObjectId = require('@fastify/mongodb').ObjectId;
-const generateAccessToken = require('./JWT-token');
-const { secret } = require('./confing');
+const { generateAccessToken, checkToken } = require('./JWT-token');
 
 async function routes(fastify, options) {
   const collection = fastify.mongo.db.collection('test_collection');
   const collectionUser = fastify.mongo.db.collection('users');
 
   fastify.get('/', async (request, reply) => {
+    auth(request, reply);
     return { hello: 'world' };
   });
 
   fastify.get('/animals', async (request, reply) => {
+    auth(request, reply);
     const result = await collection.find().toArray();
     if (result.length === 0) {
       throw new Error('No documents found');
@@ -19,6 +20,7 @@ async function routes(fastify, options) {
   });
 
   fastify.get('/animals/:animal', async (request, reply) => {
+    auth(request, reply);
     const result = await collection.findOne({ animal: request.params.animal });
     if (!result) {
       throw new Error('Invalid value');
@@ -27,6 +29,7 @@ async function routes(fastify, options) {
   });
 
   fastify.put('/animals/:id', async (request, reply) => {
+    auth(request, reply);
     const id = new ObjectId(request.params.id);
     const result = await collection.updateOne({ _id: id }, { $set: { animal: request.body.animal } });
     if (!result) {
@@ -36,6 +39,7 @@ async function routes(fastify, options) {
   });
 
   fastify.delete('/animals/:id', async (request, reply) => {
+    auth(request, reply);
     const id = new ObjectId(request.params.id);
     const result = await collection.deleteOne({ _id: id }, { $lt: { animal: request.body.animal } });
     if (!result) {
@@ -57,6 +61,7 @@ async function routes(fastify, options) {
   };
 
   fastify.post('/animals', { schema }, async (request, reply) => {
+    auth(request, reply);
     const result = await collection.insertOne({ animal: request.body.animal });
     return result;
   });
@@ -91,18 +96,25 @@ async function routes(fastify, options) {
   fastify.post('/login', { schema1 }, async (request, reply) => {
     try {
       const user = await collectionUser.findOne({ email: request.body.email, password: request.body.password });
-      return generateAccessToken(user._id, user.email);
+      const token = generateAccessToken(user._id, user.email);
+      reply.headers({ Authorization: `Bearer ${token}` });
     } catch (error) {
       if (error) {
         throw new Error('This token is not defiened');
       }
     }
   });
-  async function checkaccessToken(request, reply) {
-    const checkToken = await collection.findOne({ secret }).toArray();
-    if (checkToken.length === 0) {
-      throw new Error('Dont find a token');
+}
+function auth(request, reply) {
+  try {
+    const token = request.headers.authorization.replace('Bearer ', '');
+    checkToken(token);
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return reply.redirect(301, '/login');
     }
+    console.error(error);
+    reply.code(500).send('Oous. Something went wrong');
   }
 }
 
