@@ -9,9 +9,9 @@ const fastify = Fastify({
 });
 
 fastify.register(dbConnector);
-fastify.register(firstRoute);
-fastify.register(routesAnimals);
-fastify.register(routeUsers);
+fastify.register(firstRoute.routesFirst);
+fastify.register(routesAnimals.routesAnimals);
+fastify.register(routeUsers.routeUSers);
 
 fastify.listen({ port: 3000 }, function (err, address) {
   if (err) {
