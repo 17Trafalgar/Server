@@ -1,5 +1,5 @@
 const ObjectId = require('@fastify/mongodb').ObjectId;
-const { generateAccessToken, checkToken } = require('./JWT-token');
+const { generateAccessToken, auth } = require('./JWT-token');
 
 async function routes(fastify, options) {
   const collection = fastify.mongo.db.collection('test_collection');
@@ -104,18 +104,6 @@ async function routes(fastify, options) {
       }
     }
   });
-}
-function auth(request, reply) {
-  try {
-    const token = request.headers.authorization.replace('Bearer ', '');
-    checkToken(token);
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return reply.redirect(301, '/login');
-    }
-    console.error(error);
-    reply.code(500).send('Oous. Something went wrong');
-  }
 }
 
 module.exports = routes;
