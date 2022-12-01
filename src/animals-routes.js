@@ -1,5 +1,6 @@
 const ObjectId = require('@fastify/mongodb').ObjectId;
 const { auth } = require('./JWT-token');
+const { jwtMiddlware } = require('./JWTMiddlware');
 
 async function routesAnimals(fastify, options) {
   const collection = fastify.mongo.db.collection('test_collection');
@@ -16,8 +17,7 @@ async function routesAnimals(fastify, options) {
     body: animalBodyJsonSchema,
   };
 
-  fastify.get('/animals', async (request, reply) => {
-    auth(request, reply);
+  fastify.get('/animals', { preHandler: [jwtMiddlware] }, async (request, reply) => {
     const result = await collection.find().toArray();
     if (result.length === 0) {
       throw new Error('No documents found');
@@ -25,8 +25,7 @@ async function routesAnimals(fastify, options) {
     return result;
   });
 
-  fastify.get('/animals/:animal', async (request, reply) => {
-    auth(request, reply);
+  fastify.get('/animals/:animal', { preHandler: [jwtMiddlware] }, async (request, reply) => {
     const result = await collection.findOne({ animal: request.params.animal });
     if (!result) {
       throw new Error('Invalid value');
@@ -34,8 +33,7 @@ async function routesAnimals(fastify, options) {
     return result;
   });
 
-  fastify.put('/animals/:id', async (request, reply) => {
-    auth(request, reply);
+  fastify.put('/animals/:id', { preHandler: [jwtMiddlware] }, async (request, reply) => {
     const id = new ObjectId(request.params.id);
     const result = await collection.updateOne({ _id: id }, { $set: { animal: request.body.animal } });
     if (!result) {
@@ -44,8 +42,7 @@ async function routesAnimals(fastify, options) {
     return result;
   });
 
-  fastify.delete('/animals/:id', async (request, reply) => {
-    auth(request, reply);
+  fastify.delete('/animals/:id', { preHandler: [jwtMiddlware] }, async (request, reply) => {
     const id = new ObjectId(request.params.id);
     const result = await collection.deleteOne({ _id: id }, { $lt: { animal: request.body.animal } });
     if (!result) {
