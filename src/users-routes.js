@@ -34,7 +34,7 @@ async function routeUSers(fastify, options) {
     try {
       const user = await collectionUser.findOne({ email: request.body.email, password: request.body.password });
       const token = generateAccessToken(user._id, user.email);
-      reply.headers({ Authorization: `Bearer ${token}` });
+      return { token };
     } catch (error) {
       if (error) {
         throw new Error('This token is not defiened');
